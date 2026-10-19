@@ -215,23 +215,18 @@ class ScriptConfig:
         )
 
     @staticmethod
-    def _build_bash_command(base_args: list[str], needs_elevation: bool) -> str:
+    def _build_bash_command(base_args: list[str], needs_elevation: bool) -> list[str]:
         """
-        Build a bash command string for launching update script directly.
+        Build a command list for launching update script directly.
         Used as primary method for modern terminal emulators and standalone execution.
 
-        Args:
-            base_args: Base arguments list [script_path, temp_path, log_path, install_dir?]
-            needs_elevation: Whether to use sudo
-
-        Returns:
-            Command string for executing the update script
+        :param base_args: Base arguments list [script_path, temp_path, log_path, install_dir?]
+        :param needs_elevation: Whether to use sudo
+        :return: Command list for executing the update script
         """
-        quoted_args = " ".join(shlex.quote(arg) for arg in base_args)
         if needs_elevation:
-            return f"sudo {quoted_args}"
-        else:
-            return quoted_args
+            return ["sudo", *base_args]
+        return list(base_args)
 
     @staticmethod
     def _build_terminal_command(
